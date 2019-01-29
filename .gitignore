@@ -7,6 +7,7 @@
 *.bak
 *.dmp
 .svn
+*.lock
 .installed.cfg
 .idea/*
 *.sql
