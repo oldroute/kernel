@@ -2,9 +2,10 @@ from django.urls import path, include
 from rest_framework import routers
 from .views import *
 
+
 router = routers.DefaultRouter()
-router.register('import', ImportViewSet)
+router.register('', ImportViewSet)
 
 urlpatterns = [
-    path('', include(router.urls))
+    path('import/', include(router.urls))
 ]

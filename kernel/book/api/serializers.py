@@ -1,20 +1,27 @@
 from rest_framework import serializers
-from .models import *
+from kernel.book.models import *
 
 
 class PageRootSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Page
-        fields = ['id', 'show', 'title']
+        fields = ['id', 'text', 'data', 'children']
+
+    text = serializers.CharField(source='title')
+    data = serializers.ReadOnlyField(source='short_data')
+    children = serializers.ReadOnlyField(source='children_short_data')
 
 
 class PageDetailSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Page
-        exclude = ['lft', 'rght', 'tree_id', 'level', 'parent']
-        read_only_fields = ['id', 'author', 'last_modified']
+        fields = ['id', 'text', 'data', 'children']
+
+    text = serializers.CharField(source='title')
+    data = serializers.ReadOnlyField(source='full_data')
+    children = serializers.ReadOnlyField(source='children_full_data')
 
 
 class PageChildrenListSerializer(serializers.ModelSerializer):

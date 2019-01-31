@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/liquor-tree/dist/liquor-tree.umd.js"></script>
+
+</head>
+<body>
+
+<div id="app">
+    <book-tree></book-tree>
+</div>
+
+<script src="{% static '/js/components.js' %}"></script>
+<script src="{% static '/js/backend.js' %}"></script>
+<script>
+
+    Vue.prototype.$backend = $backend
+    Vue.config.productionTip = false
+    Vue.use(LiquorTree)
+
+    new Vue({
+      el: '#app',
+    })
+</script>
+</body>
+</html>

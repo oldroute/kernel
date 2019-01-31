@@ -41,6 +41,49 @@ class Page(MPTTModel):
     def __str__(self):
         return self.title
 
+    @property
+    def short_data(self):
+        return {
+            "show": self.show,
+            "loaded": False,
+            "text": self.title,
+        }
+
+    @property
+    def children_short_data(self):
+        return [{"text": ""}] if self.get_children().exists() else []
+
+    @property
+    def full_data(self):
+        return {
+            "show": self.show,
+            "text": self.title,
+            "loaded": False,
+            "slug": self.slug,
+            "body": self.body,
+            "author": {
+                "id": self.author.id,
+                "full_name": self.author.get_full_name(),
+             }
+        }
+
+    @property
+    def children_full_data(self):
+        children_pages = self.get_children()
+        result = []
+        for page in children_pages:
+            children_exist = page.get_children().exists()
+            result.append({
+                'id': page.id,
+                'text': page.title,
+                'children': [{"text": ""}] if children_exist else [],
+                'data': {
+                    "show": page.show,
+                    'text': page.title,
+                }
+            })
+        return result
+
 
 class Task(models.Model):
 

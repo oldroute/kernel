@@ -1,0 +1,19 @@
+
+axios.defaults.xsrfCookieName = 'csrftoken';
+axios.defaults.xsrfHeaderName = 'X-CSRFToken';
+axios.defaults.withCredentials = true;
+
+let $backend = axios.create({
+  baseURL: '/api',
+  timeout: 5000,
+  headers: {'Content-Type': 'application/json'}
+})
+
+$backend.$getBookRoot = () => {
+  return $backend.get(`book/root/`).then(response => response.data)
+}
+
+$backend.$getPage = (pk) => {
+  return $backend.get(`book/page/${pk}/`)
+  .then(response => response.data)
+}

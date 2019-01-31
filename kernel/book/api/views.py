@@ -5,7 +5,7 @@ from rest_framework.response import Response
 from .serializers import *
 
 
-class PageRootView(generics.ListAPIView):
+class BookRootView(generics.ListAPIView):
 
     permission_classes = [IsAdminUser]
     queryset = Page.objects.filter(level=0)

@@ -1,12 +1,11 @@
 from lxml import etree
-import json
-from .models import *
-from ..models import *
 from rest_framework import serializers
 from django.contrib.auth import get_user_model
 from unidecode import unidecode
 from django.template.defaultfilters import slugify
 
+from kernel.xml.models import Import, ImportLogItem
+from kernel.book.models import Task, Page
 
 UserModel = get_user_model()
 
