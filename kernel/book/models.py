@@ -42,23 +42,30 @@ class Page(MPTTModel):
         return self.title
 
     @property
+    def children_exists(self):
+        return self.get_children().exists()
+
+    @property
+    def tasks_exists(self):
+        return self.tasks.all().exists()
+
+
+    @property
     def short_data(self):
         return {
+            "type": 'page',
             "show": self.show,
             "loaded": False,
             "text": self.title,
         }
 
     @property
-    def children_short_data(self):
-        return [{"text": ""}] if self.get_children().exists() else []
-
-    @property
     def full_data(self):
         return {
+            "type": 'page',
             "show": self.show,
             "text": self.title,
-            "loaded": False,
+            "loaded": True,
             "slug": self.slug,
             "body": self.body,
             "author": {
@@ -68,18 +75,33 @@ class Page(MPTTModel):
         }
 
     @property
+    def children_short_data(self):
+        return [{"text": ""}] if self.children_exists or self.tasks_exists else []
+
+    @property
     def children_full_data(self):
-        children_pages = self.get_children()
         result = []
-        for page in children_pages:
-            children_exist = page.get_children().exists()
+        for page in self.get_children():
             result.append({
                 'id': page.id,
                 'text': page.title,
-                'children': [{"text": ""}] if children_exist else [],
+                'children': [{"text": ""}] if page.children_exists or page.tasks_exists else [],
                 'data': {
+                    'type': 'page',
                     "show": page.show,
                     'text': page.title,
+                    "loaded": False
+                }
+            })
+        if self.tasks_exists:
+            result.append({
+                'id': self.id,
+                'text': 'Задачи', 
+                'children': [{"text": ""}],
+                'data': {
+                    'type': 'tasks',
+                    'show': True,
+                    "loaded": False
                 }
             })
         return result
@@ -89,7 +111,7 @@ class Task(models.Model):
 
     source = models.ForeignKey(Source, verbose_name="Источник", on_delete=models.SET_NULL, null=True, blank=True)
     source_raw_id = models.CharField(verbose_name="Идентификатор в источнике", max_length=255, null=True, blank=True)
-    page = models.ForeignKey(Page, verbose_name="Страница", on_delete=models.SET_NULL, null=True, blank=True)
+    page = models.ForeignKey(Page, related_name="tasks", verbose_name="Страница", on_delete=models.SET_NULL, null=True, blank=True)
     tests = JSONField(blank=True, null=True)
 
     show = models.BooleanField(verbose_name="отображать", default=False)
@@ -102,3 +124,29 @@ class Task(models.Model):
 
     def __str__(self):
         return self.title
+
+    @property
+    def short_data(self):
+        return {
+            "type": 'task',
+            "show": self.show,
+            "text": self.title,
+            "loaded": False,
+        }
+
+
+    @property
+    def full_data(self):
+        return {
+            "type": 'task',
+            "show": self.show,
+            "text": self.title,
+            "loaded": False,
+            "slug": self.slug,
+            "body": self.body,
+            "tests": self.tests,
+            "author": {
+                "id": self.author.id,
+                "full_name": self.author.get_full_name(),
+             }
+        }

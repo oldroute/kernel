@@ -17,3 +17,13 @@ $backend.$getPage = (pk) => {
   return $backend.get(`book/page/${pk}/`)
   .then(response => response.data)
 }
+
+$backend.$getTasks = (pk) => {
+  return $backend.get(`book/page/${pk}/tasks/`)
+  .then(response => response.data)
+}
+
+$backend.$getTask = (pk) => {
+  return $backend.get(`book/task/${pk}/`)
+  .then(response => response.data)
+}

@@ -24,24 +24,29 @@ class PageDetailSerializer(serializers.ModelSerializer):
     children = serializers.ReadOnlyField(source='children_full_data')
 
 
-class PageChildrenListSerializer(serializers.ModelSerializer):
+#class PageChildrenListSerializer(serializers.ModelSerializer):
 
-    class Meta:
-        model = Page
-        fields = ['id', 'show', 'title']
+#    class Meta:
+#        model = Page
+#        fields = ['id', 'text', 'data']
 
 
 class TaskListSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Task
-        fields = ['id', 'show', 'title']
+        fields = ['id', 'text', 'data']
+   
+    text = serializers.CharField(source='title')
+    data = serializers.ReadOnlyField(source='short_data')
 
 
 class TaskDetailSerializer(serializers.ModelSerializer):
 
     class Meta:
-        model = Task
-        exclude = ['page']
-        read_only_fields = ['id', 'author', 'last_modified']
+        model = Page
+        fields = ['id', 'text', 'data']
+
+    text = serializers.CharField(source='title')
+    data = serializers.ReadOnlyField(source='full_data')
 

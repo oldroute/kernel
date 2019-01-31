@@ -19,16 +19,16 @@ class PageDetailView(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = PageDetailSerializer
 
 
-class PageChildrenListView(generics.GenericAPIView):
-
-    permission_classes = [IsAdminUser]
-    queryset = Page.objects.all()
-    serializer_class = PageChildrenListSerializer
-
-    def get(self, request, *args, **kwargs):
-        queryset = self.filter_queryset(self.get_queryset()).filter(**kwargs)
-        serializer = self.get_serializer(queryset, many=True)
-        return Response(serializer.data)
+#class PageChildrenListView(generics.GenericAPIView):
+#
+#    permission_classes = [IsAdminUser]
+#    queryset = Page.objects.all()
+#    serializer_class = PageChildrenListSerializer
+#
+#    def get(self, request, *args, **kwargs):
+#        queryset = self.filter_queryset(self.get_queryset()).filter(**kwargs)
+#        serializer = self.get_serializer(queryset, many=True)
+#        return Response(serializer.data)
 
 
 class TaskListView(generics.GenericAPIView):

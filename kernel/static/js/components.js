@@ -9,8 +9,9 @@ Vue.component('book-tree', {
     getBookRoot(){
       return $backend.$getBookRoot().then((response) => {return response});
     },
-    getPage(node){
-      if(node.children.length && node.data["loaded"] == false){
+    getNodeData(node){
+      switch(node.data.type){
+        case 'page':
           $backend.$getPage(node.id).then((data) => {
             node.data = data["data"];
             node.data["loaded"] = true
@@ -19,12 +20,36 @@ Vue.component('book-tree', {
                 node.append(child_node)
             }
           });
+          break;
+        case 'tasks':
+          $backend.$getTasks(node.id).then((data) => {
+            node.data["loaded"] = true
+            node.children = [];
+            for (let child_node of Object.values(data)) {
+              node.append(child_node)
+            }
+          });
+          break;
+        case 'task':
+          $backend.$getTask(node.id).then((data) => {
+            node.data = data["data"];
+            node.data["loaded"] = true
+          });
+          break;
+        }
+    },
+    nodeExpanded(node){
+      if(node.children.length > 0 && node.data["loaded"] == false && node.selected() == false ){
+        this.getNodeData(node);
+      }
+    },
+    nodeSelected(node){
+      if(node.data["loaded"] == false && node.expanded() == false){
+        this.getNodeData(node);
       }
     }
 
   },
-
-
-      template: '<div><tree :data="treeData" @node:expanded="getPage" /></div>'
+  template: '<div><tree :data="treeData" @node:expanded="nodeExpanded" @node:selected="nodeSelected" /></div>'
 })
 
