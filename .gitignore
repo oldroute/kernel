@@ -22,3 +22,6 @@ venv/
 tmp/*
 settings.py
 media/*
+node_modules/*
+.idea/*
+.vscode/*
