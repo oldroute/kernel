@@ -48,6 +48,7 @@ class Page(MPTTModel):
         data['class'] = self.__class__.__name__.lower()
         data['children_exists'] = self.get_children().exists()
         data['tasks_exists'] = self.tasks.all().exists()
+        data['tasks_or_children_exists'] = data['tasks_exists'] or data['children_exists']
         return data
 
 
