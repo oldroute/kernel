@@ -1,5 +1,4 @@
 from django.db import models
-from django.forms.models import model_to_dict
 from django.contrib.auth import get_user_model
 from django.contrib.postgres.fields import JSONField
 from mptt.models import MPTTModel, TreeForeignKey
@@ -42,15 +41,6 @@ class Page(MPTTModel):
     def __str__(self):
         return self.title
 
-    def get_data(self):
-        data = model_to_dict(self, exclude=['id'])
-        data['author'] = {'name': self.author.__str__(), 'id': self.author.id}
-        data['class'] = self.__class__.__name__.lower()
-        data['children_exists'] = self.get_children().exists()
-        data['tasks_exists'] = self.tasks.all().exists()
-        data['tasks_or_children_exists'] = data['tasks_exists'] or data['children_exists']
-        return data
-
 
 class Task(models.Model):
 
@@ -78,12 +68,13 @@ class Task(models.Model):
             self.order_key = self.page.tasks.all().aggregate(models.Max('order_key'))['order_key__max'] + 1
         super(Task, self).save(args, kwargs)
 
-    def get_data(self, mode='short'):
-        if mode == 'short':
-            data = model_to_dict(self, exclude=['id', 'tests'])
-        elif mode == 'full':
-            data = model_to_dict(self, exclude=['id'])
-        data['author'] = {'name': self.author.__str__(), 'id': self.author.id}
-        data['class'] = self.__class__.__name__.lower()
-        data['tests_exists'] = bool(self.tests)
-        return data
+    # def get_data(self, mode='short'):
+    #     if mode == 'short':
+    #         data = model_to_dict(self, exclude=['id', 'tests'])
+    #     elif mode == 'full':
+    #         data = model_to_dict(self, exclude=['id'])
+    #     data['author'] = {'name': self.author.__str__(), 'id': self.author.id}
+    #     data['class'] = self.__class__.__name__.lower()
+    #     # data['loaded'] = False
+    #     data['tests_exists'] = bool(self.tests)
+    #     return data

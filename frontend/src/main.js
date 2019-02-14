@@ -9,17 +9,38 @@ axios.defaults.withCredentials = true;
 
 let $backend = axios.create({
   baseURL: 'http://localhost:8000/api',
-  timeout: 5000,
+  timeout: 10000,
   headers: {'Content-Type': 'application/json'}
 })
 
 $backend.$getRoot = () => {
-  return $backend.get(`book/root/`).then(response => response.data)
+  return $backend.get(`book/root/`).then(response => {
+    for(let node of Object.values(response.data)){
+      node.opened = false;
+      if(!node.isLeaf) node.children = [{'title': ''}]
+    }
+    return response.data
+  })
 }
 
 $backend.$getPage = (pk) => {
   return $backend.get(`book/page/${pk}/`)
-  .then(response => response.data)
+  .then(response => {
+    let pageNode = response.data;
+    for(let child of Object.values(pageNode.children)){
+      child.loaded = false;
+      child.opened = false;
+      if(!child.isLeaf) child.children = [{'title': ''}]
+    }
+    
+    if (pageNode.tasks){
+      pageNode.children.unshift({
+        title: 'Задачи',
+        children: pageNode.tasks,
+      });
+    }
+    return pageNode;
+  })
 }
 
 $backend.$getTask = (pk) => {
